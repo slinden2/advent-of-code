@@ -44,13 +44,43 @@ const solve1 = (input) => {
   console.log(result.join``);
 };
 
-const solve2 = (input) => {};
+const solve2 = (input) => {
+  const labels = input.split("").map(Number);
+  const max = 1000000;
+  const nextMap = {};
+  for (let i = 0; i < max; i++) {
+    nextMap[labels[i] || i + 1] = labels[i + 1] || i + 2;
+  }
+  nextMap[max] = labels[0];
+
+  let curr = labels[0];
+  for (let i = 0; i < 10000000; i++) {
+    const pickup = [
+      nextMap[curr],
+      nextMap[nextMap[curr]],
+      nextMap[nextMap[nextMap[curr]]],
+    ];
+
+    let dest = ((curr - 2 + max) % max) + 1;
+    while (pickup.includes(dest)) {
+      dest = ((dest - 2 + max) % max) + 1;
+    }
+
+    nextMap[curr] = nextMap[pickup[2]];
+    const tmp = nextMap[dest];
+    nextMap[dest] = pickup[0];
+    nextMap[pickup[2]] = tmp;
+    curr = nextMap[curr];
+  }
+
+  console.log(nextMap[1] * nextMap[nextMap[1]]);
+};
 
 const inputExample = `389125467`;
 
 const input = `586439172`;
 
 // solve1(inputExample);
-solve1(input);
+// solve1(input);
 // solve2(inputExample)
-// solve2(input)
+solve2(input);
